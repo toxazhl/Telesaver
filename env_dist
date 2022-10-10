@@ -1,0 +1,30 @@
+# RENAME THIS FILE TO .env
+# Telegram bot
+## Tokenб required. Get it from @BotFather
+BOT__TOKEN=
+## FSM Storage for saving user data and states. Can be 'memory' or 'redis'
+BOT__FSM_STORAGE=memory
+
+# Telegram user client
+## Get it from https://my.telegram.org/apps
+CLIENT__API_ID=
+CLIENT__API_HASH=
+# Session name
+CLIENT__SESSION_NAME=sessions/client
+
+# Storages
+## Redis connection string. Required if BOT_FSM_STORAGE=redis
+STORAGE__REDIS_DSN=redis://localhost:6379/0
+## PostgreSQL connection string. Always required
+STORAGE__POSTGRES_DSN=postgresql+asyncpg://user:pass@ip:port/database
+
+# Webhooks
+WEBHOOK__ENABLE=False
+## Domain part of your webhook. Required if webhook.enable is True
+WEBHOOK__DOMAIN=https://example.com
+## Webhook patchs. Required if webhook.enable is True
+WEBHOOK__PATH__BOT=/webhook/telegram_bot
+
+## App config
+WEBAPP__HOST=localhost
+WEBAPP__PORT=9000

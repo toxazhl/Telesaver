@@ -1,0 +1,15 @@
+# uvloop
+# cchardet
+ujson
+tgcrypto
+aiodns
+aiohttp[speedups]
+aiogram==3.0.0b5
+asyncpg
+pydantic
+pyparsing
+python-dotenv
+PyYAML
+redis
+SQLAlchemy
+pyrogram
