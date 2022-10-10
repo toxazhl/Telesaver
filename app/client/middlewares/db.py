@@ -8,6 +8,5 @@ class DbSessionMiddleware(OnUpdateMiddleware):
         self.session_pool = session_pool
 
     async def __call__(self, update) -> dict:
-        print(type(update))
         async with self.session_pool() as session:
             return {"session": session}
