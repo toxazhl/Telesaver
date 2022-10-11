@@ -3,5 +3,7 @@ __pycache__/
 
 venv/
 logs/
-app/sessions/client.session
+app/files/*
+app/sessions/*
 .vscode/
+

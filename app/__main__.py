@@ -5,12 +5,11 @@ import os
 import yaml
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from pyrogram.methods.utilities.idle import idle
 
 from app.configreader import Config
-from app.bot.runner import run_bot, setup_bot, setup_bot_webhook, stop_bot
-from app.client.runner import run_client, setup_client, stop_client
-from app.web_server.runner import run_server, setup_server, stop_server
+from app.bot.bot import Bot
+from app.client.client import Client
+from app.web_server.webserver import Webserver
 
 
 def setup_logging() -> None:
@@ -37,46 +36,50 @@ async def main() -> None:
     )
     db_pool = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
-    bot, dp = await setup_bot(
+    bot = Bot(
+        session_name=config.bot.session_name,
+        api_id=config.client.api_id,
+        api_hash=config.client.api_hash,
         token=config.bot.token,
         fsm_storage=config.bot.fsm_storage,
         redis_dsn=config.storage.redis_dsn,
         db_pool=db_pool,
     )
 
-    client = await setup_client(
+    client = Client(
         session_name=config.client.session_name,
         api_id=config.client.api_id,
         api_hash=config.client.api_hash,
+        pyro_bot=bot.pyro_bot,
         db_pool=db_pool,
     )
 
-    if config.webhook.enable:
-        app, site = setup_server(
-            host=config.webapp.host, port=config.webapp.port
-        )
-        await setup_bot_webhook(
-            bot=bot,
-            dp=dp,
-            app=app,
-            domain=config.webhook.domain,
-            path=config.webhook.path.bot,
-        )
-        await run_server(site=site)
+    try:
+        if config.webhook.enable:
+            webserver = Webserver()
+            await bot.setup_webhook(
+                app=webserver.app,
+                domain=config.webhook.domain,
+                path=config.webhook.path.bot,
+            )
+            await webserver.run(
+                host=config.webapp.host, port=config.webapp.port
+            )
 
-    else:
-        await run_bot(bot=bot, dp=dp)
+        else:
+            await bot.run_polling()
 
-    await run_client(client=client)
+        await client.run()
+        logger.info("Started")
+        await asyncio.Event().wait()
 
-    logger.info("Started")
-    await idle()
+    finally:
+        if config.webhook.enable:
+            await Webserver.stop()
 
-    await stop_bot(bot=bot)
-    await stop_client(client=client)
-
-    if config.webhook.enable:
-        await stop_server(site=site)
+        await bot.stop()
+        await client.stop()
+        await engine.dispose()
 
 
 if __name__ == "__main__":

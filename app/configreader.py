@@ -4,6 +4,7 @@ from pydantic import BaseModel, BaseSettings, PostgresDsn, RedisDsn, validator
 class Bot(BaseModel):
     token: str
     fsm_storage: str
+    session_name: str
 
     @validator("fsm_storage")
     def validate_fsm_storage(cls, v):
@@ -21,17 +22,17 @@ class Client(BaseModel):
 
 
 class Storage(BaseModel):
-    redis_dsn: RedisDsn = None
+    redis_dsn: None | RedisDsn = None
     postgres_dsn: PostgresDsn
 
 
 class Path(BaseModel):
-    bot: str = None
+    bot: None | str = None
 
 
 class Webhook(BaseModel):
     enable: bool
-    domain: str = None
+    domain: None | str = None
     path: Path
 
 
