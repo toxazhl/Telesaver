@@ -28,6 +28,7 @@ async def delete_message(
         )
         if message is None:
             logger.warn(f"Message {repr(message)} not found")
+            continue
 
         message.deleted = True
         message.date_deleted = datetime.now()
