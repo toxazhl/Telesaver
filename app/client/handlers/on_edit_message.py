@@ -2,6 +2,7 @@ import json
 import logging
 
 from pyrogram import Client
+from pyrogram.enums import ChatType
 from pyrogram.filters import Filter
 from pyrogram.handlers import EditedMessageHandler
 from pyrogram.types import Message, Object
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 async def edit_message(client: Client, message: Message, session: AsyncSession) -> None:
-    if message.chat.type == "private":
+    if message.chat.type == ChatType.PRIVATE:
         logger.info(f"Edit message {message.id} in chat {message.chat.id}")
 
         chat = message.chat

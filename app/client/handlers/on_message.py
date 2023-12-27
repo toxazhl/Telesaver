@@ -2,6 +2,7 @@ import json
 import logging
 
 from pyrogram import Client
+from pyrogram.enums import ChatType
 from pyrogram.filters import Filter
 from pyrogram.handlers import MessageHandler
 from pyrogram.types import Message, Object
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 async def new_message(client: Client, message: Message, session: AsyncSession) -> None:
-    if message.chat.type == "private":
+    if message.chat.type == ChatType.PRIVATE:
         logger.info(f"New message {message.id}")
         await queries.insert_chat(
             session=session,
