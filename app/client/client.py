@@ -1,10 +1,10 @@
 import pyrogram
-from pyrogram_middleware_patch import patch
+from pyrogram_patch import patch
 from sqlalchemy.orm import sessionmaker
 
+from .handlers import on_delete_message, on_edit_message, on_message
 from .middlewares.db import DbSessionMiddleware
 from .middlewares.pyro_bot import PyroBotMiddleware
-from .handlers import on_message, on_edit_message, on_delete_message
 
 
 class Client:

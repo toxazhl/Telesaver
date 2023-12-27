@@ -1,5 +1,6 @@
 from pyrogram import Client
-from pyrogram_middleware_patch.types import OnUpdateMiddleware
+from pyrogram_patch.middlewares import PatchHelper
+from pyrogram_patch.middlewares.middleware_types import OnUpdateMiddleware
 
 
 class PyroBotMiddleware(OnUpdateMiddleware):
@@ -7,5 +8,5 @@ class PyroBotMiddleware(OnUpdateMiddleware):
         super().__init__()
         self.bot = bot
 
-    async def __call__(self, update) -> dict:
-        return {"pyro_bot": self.bot}
+    async def __call__(self, update, client, patch_helper: PatchHelper):
+        patch_helper.data["pyro_bot"] = self.bot
