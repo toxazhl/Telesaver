@@ -19,12 +19,12 @@ async def delete_message(
     pyro_bot: Client,
     session: AsyncSession,
 ) -> None:
-    for message in messages:
-        logger.info(f"Delete message {repr(message)}")
+    for r_message in messages:
+        logger.info(f"Delete message {repr(r_message)}")
         message = await queries.get_message(
             session=session,
-            message_id=message.id,
-            chat_id=message.chat.id if message.chat else None,
+            message_id=r_message.id,
+            chat_id=r_message.chat.id if r_message.chat else None,
         )
         if message is None:
             logger.warn(f"Message {repr(message)} not found")
