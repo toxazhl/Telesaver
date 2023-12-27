@@ -3,12 +3,12 @@ import logging.config
 import os
 
 import yaml
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.configreader import Config
 from app.bot.bot import Bot
 from app.client.client import Client
+from app.configreader import Config
 from app.web_server.webserver import Webserver
 
 
@@ -31,9 +31,7 @@ async def main() -> None:
 
     config = Config()
 
-    engine = create_async_engine(
-        config.storage.postgres_dsn, future=True, echo=False
-    )
+    engine = create_async_engine(config.storage.postgres_dsn, future=True, echo=False)
     db_pool = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
     bot = Bot(
@@ -45,7 +43,7 @@ async def main() -> None:
         redis_dsn=config.storage.redis_dsn,
         db_pool=db_pool,
     )
-
+    print(config.client.session_name)
     client = Client(
         session_name=config.client.session_name,
         api_id=config.client.api_id,
@@ -62,9 +60,7 @@ async def main() -> None:
                 domain=config.webhook.domain,
                 path=config.webhook.path.bot,
             )
-            await webserver.run(
-                host=config.webapp.host, port=config.webapp.port
-            )
+            await webserver.run(host=config.webapp.host, port=config.webapp.port)
 
         else:
             await bot.run_polling()
